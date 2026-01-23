@@ -8,16 +8,7 @@ export default defineConfig({
     assetsDir: 'assets',
     cssCodeSplit: false,
     cssMinify: true,
-    minify: 'terser',
-    terserOptions: {
-      compress: {
-        drop_console: false,
-        preserve_infinity: true,
-      },
-      format: {
-        preserve_annotations: true,
-      },
-    },
+    minify: 'esbuild', // Usar esbuild que já vem com Vite
     rollupOptions: {
       input: {
         main: './index.html'
