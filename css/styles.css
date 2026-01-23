@@ -1191,3 +1191,76 @@ img {
     outline: 2px solid var(--secondary);
     outline-offset: 2px;
 }
+
+/* Fallback: garantir visibilidade inicial dos elementos antes do AOS carregar */
+[data-aos] {
+    will-change: transform, opacity;
+    /* Garantir visibilidade inicial */
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Garantir que elementos importantes sejam sempre visíveis */
+.whatsapp-float {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+    z-index: 1000 !important;
+}
+
+.contact-form {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
+.hero-content,
+.services-grid,
+.values-grid,
+.gallery-grid,
+.about-content,
+.contact-content {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Garantir que imagens carreguem corretamente */
+img {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
+/* Garantir que botões sejam sempre visíveis */
+.btn-main,
+.btn-secondary,
+.btn-cta-nav {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: inline-flex !important;
+}
+
+/* Garantir que cards sejam visíveis */
+.service-card,
+.value-card,
+.gallery-item {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Fallback para quando AOS não carregar - mostrar elementos após 1s */
+@keyframes fadeInFallback {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* Aplicar fallback apenas se AOS não estiver funcionando */
+body:not(.aos-enabled) [data-aos] {
+    animation: fadeInFallback 0.6s ease-out forwards;
+    opacity: 1 !important;
+    visibility: visible !important;
+}

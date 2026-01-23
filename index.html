@@ -486,6 +486,54 @@
         document.getElementById("current-year").textContent = new Date().getFullYear();
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+        // Fallback: garantir que elementos sejam visíveis mesmo se AOS não carregar
+        (function() {
+            // Função para tornar elementos visíveis
+            function makeElementsVisible() {
+                const aosElements = document.querySelectorAll('[data-aos]');
+                aosElements.forEach(function(el) {
+                    el.style.opacity = '1';
+                    el.style.visibility = 'visible';
+                    el.style.transform = '';
+                });
+                
+                // Garantir que botão WhatsApp seja visível
+                const whatsappBtn = document.querySelector('.whatsapp-float');
+                if (whatsappBtn) {
+                    whatsappBtn.style.opacity = '1';
+                    whatsappBtn.style.visibility = 'visible';
+                    whatsappBtn.style.display = 'block';
+                }
+                
+                // Garantir que formulário seja visível
+                const form = document.querySelector('.contact-form');
+                if (form) {
+                    form.style.opacity = '1';
+                    form.style.visibility = 'visible';
+                    form.style.display = 'block';
+                }
+            }
+            
+            // Tentar após DOMContentLoaded
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(makeElementsVisible, 1000);
+                });
+            } else {
+                setTimeout(makeElementsVisible, 1000);
+            }
+            
+            // Tentar após load completo
+            window.addEventListener('load', function() {
+                setTimeout(function() {
+                    if (typeof AOS === 'undefined' || !document.body.classList.contains('aos-enabled')) {
+                        makeElementsVisible();
+                    }
+                }, 2000);
+            });
+        })();
+    </script>
     <script src="/js/scripts.js"></script>
 </body>
 </html>

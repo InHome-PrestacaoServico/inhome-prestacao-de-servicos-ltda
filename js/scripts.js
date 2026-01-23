@@ -1,30 +1,67 @@
+// Função para inicializar AOS quando estiver disponível
+function initAOS() {
+    if (typeof AOS !== 'undefined') {
+        try {
+            AOS.init({
+                duration: 600,
+                easing: 'ease-out',
+                once: true,
+                offset: 50,
+                delay: 0,
+                disable: false,
+                startEvent: 'DOMContentLoaded',
+                useClassNames: false,
+                disableMutationObserver: false,
+                debounceDelay: 50,
+                throttleDelay: 99,
+                // Configurações específicas para mobile
+                ...(window.innerWidth <= 768 && {
+                    duration: 400,
+                    offset: 30
+                })
+            });
+            
+            // Marcar que AOS está habilitado
+            document.body.classList.add('aos-enabled');
+            
+            // Forçar refresh do AOS após um pequeno delay
+            setTimeout(() => {
+                if (typeof AOS !== 'undefined') {
+                    AOS.refresh();
+                }
+            }, 300);
+        } catch (error) {
+            console.warn('Erro ao inicializar AOS:', error);
+            // Se houver erro, garantir que elementos sejam visíveis
+            document.body.classList.remove('aos-enabled');
+        }
+    } else {
+        // Se AOS não estiver disponível, tentar novamente após um delay (máximo 5 tentativas)
+        if (!window.aosInitAttempts) {
+            window.aosInitAttempts = 0;
+        }
+        if (window.aosInitAttempts < 5) {
+            window.aosInitAttempts++;
+            setTimeout(initAOS, 200);
+        } else {
+            // Após 5 tentativas, garantir que elementos sejam visíveis sem AOS
+            document.body.classList.remove('aos-enabled');
+            const aosElements = document.querySelectorAll('[data-aos]');
+            aosElements.forEach(el => {
+                el.style.opacity = '1';
+                el.style.visibility = 'visible';
+            });
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const viewport = document.querySelector('meta[name="viewport"]');
     if (viewport) {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }
-    setTimeout(() => {
-        AOS.init({
-            duration: 600,
-            easing: 'ease-out',
-            once: true,
-            offset: 50,
-            delay: 0,
-            disable: false,
-            startEvent: 'DOMContentLoaded',
-            useClassNames: false,
-            disableMutationObserver: false,
-            debounceDelay: 50,
-            throttleDelay: 99,
-            // Configurações específicas para mobile
-            ...(window.innerWidth <= 768 && {
-                duration: 400,
-                offset: 30
-            })
-        });
-    }, 100);
 
-    // Inicializar funcionalidades
+    // Inicializar funcionalidades imediatamente
     initMobileMenu();
     initScrollEffects();
     initFormHandler();
@@ -32,9 +69,26 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     initHeaderScroll();
     
+    // Inicializar AOS após um pequeno delay para garantir que o script esteja carregado
+    setTimeout(initAOS, 200);
+    
     setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
-    }, 200);
+        if (typeof AOS !== 'undefined') {
+            AOS.refresh();
+        }
+    }, 500);
+});
+
+// Também tentar inicializar quando a página estiver totalmente carregada
+window.addEventListener('load', function() {
+    setTimeout(() => {
+        if (typeof AOS !== 'undefined' && !AOS.instance) {
+            initAOS();
+        } else if (typeof AOS !== 'undefined') {
+            AOS.refresh();
+        }
+    }, 100);
 });
 
 function initMobileMenu() {
