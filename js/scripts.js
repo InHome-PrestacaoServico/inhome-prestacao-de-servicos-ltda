@@ -95,12 +95,30 @@ function initMobileMenu() {
     const hamburger = document.querySelector(".hamburger");
     const navMenu = document.querySelector(".nav-menu");
     const navLinks = document.querySelectorAll(".nav-menu a");
+    const header = document.querySelector(".header");
 
     if (hamburger && navMenu) {
-        hamburger.addEventListener("click", () => {
+        // Função para calcular a altura do header dinamicamente
+        function updateMenuPosition() {
+            if (header) {
+                const headerHeight = header.offsetHeight;
+                navMenu.style.top = headerHeight + 'px';
+                navMenu.style.maxHeight = `calc(100vh - ${headerHeight}px)`;
+            }
+        }
+
+        // Atualizar posição inicial
+        updateMenuPosition();
+
+        // Atualizar posição quando a janela redimensionar
+        window.addEventListener('resize', updateMenuPosition);
+
+        hamburger.addEventListener("click", (e) => {
+            e.stopPropagation();
             hamburger.classList.toggle("active");
             navMenu.classList.toggle("active");
             document.body.classList.toggle("menu-open");
+            updateMenuPosition();
         });
 
         navLinks.forEach(link => {
@@ -111,8 +129,20 @@ function initMobileMenu() {
             });
         });
 
+        // Fechar menu ao clicar fora
         document.addEventListener("click", (e) => {
-            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+            if (navMenu.classList.contains("active")) {
+                if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
+                    hamburger.classList.remove("active");
+                    navMenu.classList.remove("active");
+                    document.body.classList.remove("menu-open");
+                }
+            }
+        });
+
+        // Fechar menu ao pressionar ESC
+        document.addEventListener("keydown", (e) => {
+            if (e.key === "Escape" && navMenu.classList.contains("active")) {
                 hamburger.classList.remove("active");
                 navMenu.classList.remove("active");
                 document.body.classList.remove("menu-open");

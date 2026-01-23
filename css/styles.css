@@ -58,6 +58,8 @@ body {
     padding: 0 20px;
     width: 100%;
     box-sizing: border-box;
+    position: relative;
+    overflow: visible; /* Garantir que conteúdo não seja cortado */
 }
 
 /* ===== TIPOGRAFIA ===== */
@@ -217,7 +219,7 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
 .header {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
-    padding: 1rem 0;
+    padding: 1rem 0; /* 16px top/bottom */
     position: fixed;
     top: 0;
     left: 0;
@@ -227,6 +229,8 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     transition: var(--transition);
     border-bottom: 1px solid var(--border);
     will-change: transform;
+    min-height: 80px; /* Garantir altura mínima consistente */
+    box-sizing: border-box;
 }
 
 .nav {
@@ -406,28 +410,47 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
 }
 
 .section {
-    padding: 5rem 0;
+    padding: 5rem 0; /* 80px top/bottom */
+    position: relative;
+    z-index: 1;
+    overflow: visible; /* Garantir que conteúdo não seja cortado */
+    margin-bottom: 0;
 }
 
 .section:nth-child(even) {
     background: var(--bg-light);
 }
 
+/* Garantir espaçamento adequado antes da seção CTA */
+.section + .cta-section {
+    margin-top: 2rem; /* 32px de espaçamento */
+}
+
+/* Garantir espaçamento adequado após seção CTA */
+.cta-section + .section {
+    margin-top: 2rem; /* 32px de espaçamento */
+}
+
 .services-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 2rem; /* Espaçamento extra para evitar corte */
 }
 
 .service-card {
     background: var(--white);
-    padding: 2.5rem;
+    padding: 2.5rem; /* 40px */
     border-radius: 12px;
     box-shadow: var(--shadow);
     transition: var(--transition);
     border: 1px solid var(--border);
     position: relative;
-    overflow: hidden;
+    overflow: visible; /* Mudado de hidden para visible para não cortar conteúdo */
+    min-height: auto;
+    height: auto;
 }
 
 .service-card::before {
@@ -509,7 +532,12 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     background: var(--gradient);
     color: var(--white);
     text-align: center;
-    padding: 4rem 0;
+    padding: 4rem 0; /* 64px top/bottom */
+    position: relative;
+    z-index: 1;
+    margin-top: 3rem; /* Espaçamento antes da seção CTA para evitar corte */
+    margin-bottom: 0;
+    clear: both; /* Garantir que não sobreponha conteúdo anterior */
 }
 
 .cta-content h2 {
@@ -587,6 +615,9 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 2rem; /* Espaçamento extra para evitar corte */
 }
 
 .value-card {
@@ -635,6 +666,9 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.5rem;
+    position: relative;
+    z-index: 1;
+    padding-bottom: 2rem; /* Espaçamento extra para evitar corte */
 }
 
 .gallery-item {
@@ -970,9 +1004,10 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     /* Layout responsivo */
     .nav-menu {
         position: fixed;
-        top: 100%;
+        top: 80px; /* Altura aproximada do header */
         left: 0;
         right: 0;
+        width: 100%;
         background: var(--white);
         flex-direction: column;
         padding: 2rem;
@@ -980,13 +1015,47 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
         transform: translateY(-100%);
         opacity: 0;
         visibility: hidden;
-        transition: var(--transition);
+        transition: all 0.3s ease-out;
+        z-index: 998; /* Abaixo do header mas acima do conteúdo */
+        max-height: calc(100vh - 80px);
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
     }
     
     .nav-menu.active {
         transform: translateY(0);
         opacity: 1;
         visibility: visible;
+    }
+    
+    .nav-menu li {
+        width: 100%;
+        margin: 0;
+        padding: 0.5rem 0;
+    }
+    
+    .nav-menu a {
+        display: block;
+        width: 100%;
+        padding: 0.75rem 0;
+        font-size: 1.1rem;
+    }
+    
+    /* Garantir que o body não role quando menu estiver aberto */
+    body.menu-open {
+        overflow: hidden;
+        position: fixed;
+        width: 100%;
+    }
+    
+    body.menu-open .nav-menu {
+        transform: translateY(0);
+    }
+    
+    /* Garantir que hamburger seja clicável */
+    .hamburger {
+        z-index: 999;
+        position: relative;
     }
     
     .hamburger {
