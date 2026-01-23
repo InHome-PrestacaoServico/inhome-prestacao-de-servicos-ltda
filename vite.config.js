@@ -6,34 +6,24 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
-    cssCodeSplit: false,
-    cssMinify: true,
-    minify: 'esbuild', // Usar esbuild que já vem com Vite
+    sourcemap: false,
+    minify: 'terser',
     rollupOptions: {
       input: {
         main: './index.html'
       },
       output: {
-        assetFileNames: (assetInfo) => {
-          if (assetInfo.name && assetInfo.name.endsWith('.css')) {
-            return 'css/[name][extname]';
-          }
-          return 'assets/[name]-[hash][extname]';
-        },
-      },
-    },
-    assetsInlineLimit: 0,
-    sourcemap: false,
-  },
-  css: {
-    devSourcemap: true,
+        manualChunks: undefined
+      }
+    }
   },
   server: {
     port: 3000,
-    open: true
+    open: false,
+    host: '0.0.0.0'
   },
   preview: {
     port: 4173,
-    open: true
+    open: false
   }
 })

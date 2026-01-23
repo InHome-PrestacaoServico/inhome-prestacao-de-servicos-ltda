@@ -1,67 +1,30 @@
-// Função para inicializar AOS quando estiver disponível
-function initAOS() {
-    if (typeof AOS !== 'undefined') {
-        try {
-            AOS.init({
-                duration: 800, // Aumentado de 600 para 800ms para animações mais suaves
-                easing: 'ease-out',
-                once: true,
-                offset: 100, // Aumentado de 50 para 100px
-                delay: 0,
-                disable: false,
-                startEvent: 'DOMContentLoaded',
-                useClassNames: false,
-                disableMutationObserver: false,
-                debounceDelay: 50,
-                throttleDelay: 99,
-                // Configurações específicas para mobile
-                ...(window.innerWidth <= 768 && {
-                    duration: 600, // Aumentado de 400 para 600ms no mobile
-                    offset: 50 // Aumentado de 30 para 50px no mobile
-                })
-            });
-            
-            // Marcar que AOS está habilitado
-            document.body.classList.add('aos-enabled');
-            
-            // Forçar refresh do AOS após um pequeno delay
-            setTimeout(() => {
-                if (typeof AOS !== 'undefined') {
-                    AOS.refresh();
-                }
-            }, 300);
-        } catch (error) {
-            console.warn('Erro ao inicializar AOS:', error);
-            // Se houver erro, garantir que elementos sejam visíveis
-            document.body.classList.remove('aos-enabled');
-        }
-    } else {
-        // Se AOS não estiver disponível, tentar novamente após um delay (máximo 5 tentativas)
-        if (!window.aosInitAttempts) {
-            window.aosInitAttempts = 0;
-        }
-        if (window.aosInitAttempts < 5) {
-            window.aosInitAttempts++;
-            setTimeout(initAOS, 200);
-        } else {
-            // Após 5 tentativas, garantir que elementos sejam visíveis sem AOS
-            document.body.classList.remove('aos-enabled');
-            const aosElements = document.querySelectorAll('[data-aos]');
-            aosElements.forEach(el => {
-                el.style.opacity = '1';
-                el.style.visibility = 'visible';
-            });
-        }
-    }
-}
-
 document.addEventListener('DOMContentLoaded', function() {
     const viewport = document.querySelector('meta[name="viewport"]');
     if (viewport) {
         viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
     }
+    setTimeout(() => {
+        AOS.init({
+            duration: 600,
+            easing: 'ease-out',
+            once: true,
+            offset: 50,
+            delay: 0,
+            disable: false,
+            startEvent: 'DOMContentLoaded',
+            useClassNames: false,
+            disableMutationObserver: false,
+            debounceDelay: 50,
+            throttleDelay: 99,
+            // Configurações específicas para mobile
+            ...(window.innerWidth <= 768 && {
+                duration: 400,
+                offset: 30
+            })
+        });
+    }, 100);
 
-    // Inicializar funcionalidades imediatamente
+    // Inicializar funcionalidades
     initMobileMenu();
     initScrollEffects();
     initFormHandler();
@@ -69,56 +32,21 @@ document.addEventListener('DOMContentLoaded', function() {
     initSmoothScroll();
     initHeaderScroll();
     
-    // Inicializar AOS após um pequeno delay para garantir que o script esteja carregado
-    setTimeout(initAOS, 200);
-    
     setTimeout(() => {
         window.dispatchEvent(new Event('resize'));
-        if (typeof AOS !== 'undefined') {
-            AOS.refresh();
-        }
-    }, 500);
-});
-
-// Também tentar inicializar quando a página estiver totalmente carregada
-window.addEventListener('load', function() {
-    setTimeout(() => {
-        if (typeof AOS !== 'undefined' && !AOS.instance) {
-            initAOS();
-        } else if (typeof AOS !== 'undefined') {
-            AOS.refresh();
-        }
-    }, 100);
+    }, 200);
 });
 
 function initMobileMenu() {
     const hamburger = document.querySelector(".hamburger");
     const navMenu = document.querySelector(".nav-menu");
     const navLinks = document.querySelectorAll(".nav-menu a");
-    const header = document.querySelector(".header");
 
     if (hamburger && navMenu) {
-        // Função para calcular a altura do header dinamicamente
-        function updateMenuPosition() {
-            if (header) {
-                const headerHeight = header.offsetHeight;
-                navMenu.style.top = headerHeight + 'px';
-                navMenu.style.maxHeight = `calc(100vh - ${headerHeight}px)`;
-            }
-        }
-
-        // Atualizar posição inicial
-        updateMenuPosition();
-
-        // Atualizar posição quando a janela redimensionar
-        window.addEventListener('resize', updateMenuPosition);
-
-        hamburger.addEventListener("click", (e) => {
-            e.stopPropagation();
+        hamburger.addEventListener("click", () => {
             hamburger.classList.toggle("active");
             navMenu.classList.toggle("active");
             document.body.classList.toggle("menu-open");
-            updateMenuPosition();
         });
 
         navLinks.forEach(link => {
@@ -129,20 +57,8 @@ function initMobileMenu() {
             });
         });
 
-        // Fechar menu ao clicar fora
         document.addEventListener("click", (e) => {
-            if (navMenu.classList.contains("active")) {
-                if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
-                    hamburger.classList.remove("active");
-                    navMenu.classList.remove("active");
-                    document.body.classList.remove("menu-open");
-                }
-            }
-        });
-
-        // Fechar menu ao pressionar ESC
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && navMenu.classList.contains("active")) {
+            if (!hamburger.contains(e.target) && !navMenu.contains(e.target)) {
                 hamburger.classList.remove("active");
                 navMenu.classList.remove("active");
                 document.body.classList.remove("menu-open");
