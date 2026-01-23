@@ -11,6 +11,9 @@
     --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
     --gradient: linear-gradient(135deg, var(--primary) 0%, #2A1D13 100%);
     --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* Garantir tamanhos base consistentes */
+    --base-font-size: 16px;
+    --base-line-height: 1.6;
 }
 
 * {
@@ -20,19 +23,33 @@
 }
 
 html {
+    font-size: 16px; /* Base para unidades rem */
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
     -ms-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+/* Garantir tamanho consistente em diferentes navegadores */
+@media screen and (max-width: 768px) {
+    html {
+        font-size: 16px; /* Manter 16px mesmo no mobile */
+    }
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-    line-height: 1.6;
+    font-size: var(--base-font-size); /* 16px */
+    line-height: var(--base-line-height); /* 1.6 */
     color: var(--text);
     background-color: var(--white);
     overflow-x: hidden;
     min-width: 320px;
     position: relative;
+    /* Garantir renderização consistente */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 .container {
@@ -88,16 +105,19 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 1rem 2rem;
+    padding: 1rem 2rem; /* 16px 32px */
+    min-height: 48px; /* Garantir altura mínima */
     text-decoration: none;
     border-radius: 8px;
     font-weight: 500;
-    font-size: 1rem;
+    font-size: 1rem; /* 16px */
+    line-height: 1.5;
     transition: var(--transition);
     cursor: pointer;
     border: none;
     position: relative;
     overflow: hidden;
+    box-sizing: border-box;
 }
 
 .btn-main {
@@ -147,16 +167,19 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
     align-items: center;
     justify-content: center;
     width: 60px;
+    min-width: 60px; /* Garantir largura mínima */
     height: 60px;
+    min-height: 60px; /* Garantir altura mínima */
     background: #25D366;
     color: white;
     border-radius: 50%;
     text-decoration: none;
-    font-size: 1.5rem;
+    font-size: 1.5rem; /* 24px */
     box-shadow: var(--shadow-lg);
     transition: var(--transition);
     position: relative;
     animation: pulse 2s infinite;
+    box-sizing: border-box;
 }
 
 .whatsapp-btn:hover {
@@ -232,7 +255,10 @@ h3 { font-size: clamp(1.5rem, 3vw, 2rem); }
 
 .logo img {
     height: 60px;
+    min-height: 60px; /* Garantir altura mínima */
     width: auto;
+    max-width: 200px; /* Limitar largura máxima */
+    object-fit: contain;
 }
 
 .nav-menu {
@@ -1163,6 +1189,18 @@ img {
     max-width: 100%;
     height: auto;
     display: block;
+    /* Garantir que imagens não fiquem muito pequenas */
+    min-width: 0;
+    object-fit: cover;
+}
+
+/* Garantir tamanhos mínimos para imagens específicas */
+.hero-image img,
+.about-image img,
+.gallery-item img {
+    min-height: 200px;
+    width: 100%;
+    object-fit: cover;
 }
 
 @media screen and (-webkit-min-device-pixel-ratio: 0) {

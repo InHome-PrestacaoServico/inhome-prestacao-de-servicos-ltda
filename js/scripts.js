@@ -3,10 +3,10 @@ function initAOS() {
     if (typeof AOS !== 'undefined') {
         try {
             AOS.init({
-                duration: 600,
+                duration: 800, // Aumentado de 600 para 800ms para animações mais suaves
                 easing: 'ease-out',
                 once: true,
-                offset: 50,
+                offset: 100, // Aumentado de 50 para 100px
                 delay: 0,
                 disable: false,
                 startEvent: 'DOMContentLoaded',
@@ -16,8 +16,8 @@ function initAOS() {
                 throttleDelay: 99,
                 // Configurações específicas para mobile
                 ...(window.innerWidth <= 768 && {
-                    duration: 400,
-                    offset: 30
+                    duration: 600, // Aumentado de 400 para 600ms no mobile
+                    offset: 50 // Aumentado de 30 para 50px no mobile
                 })
             });
             
